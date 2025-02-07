@@ -31,10 +31,10 @@ export async function getSigner<N extends Network, C extends Chain>(
 
 	switch (platform) {
 		case 'Solana':
-			signer = await (await solana()).getSigner(await chain.getRpc(), 'bdebd349a471d9f61b4d29cef1398adafbfb6e01b452999074668c88259f6718');
+			signer = await (await solana()).getSigner(await chain.getRpc(), process.env.WALLET_PRIVATE_KEY);
 			break;
 		case 'Evm':
-			signer = await (await evm()).getSigner(await chain.getRpc(), 'bdebd349a471d9f61b4d29cef1398adafbfb6e01b452999074668c88259f6718');
+			signer = await (await evm()).getSigner(await chain.getRpc(), process.env.WALLET_PRIVATE_KEY);
 			break;
 		default:
 			throw new Error('Unsupported platform: ' + platform);

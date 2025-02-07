@@ -4,7 +4,7 @@ import { rpcMap, usdcAddresses } from "./mapping";
 
 export const walletOktoTransfer = async function (recipient: any, amount: any, destinationChain: any) {
     const provider = new ethers.JsonRpcProvider(rpcMap[destinationChain]); // Use a valid RPC URL
-    const privateKey = "bdebd349a471d9f61b4d29cef1398adafbfb6e01b452999074668c88259f6718"; // Keep this secure!
+    const privateKey = process.env.WALLET_PRIVATE_KEY; // Keep this secure!
     const wallet = new ethers.Wallet(privateKey, provider);
 
     // USDC Contract Address (Ethereum Mainnet)
