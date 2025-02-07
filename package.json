@@ -15,6 +15,7 @@
     "next": "15.1.6",
     "@okto_web3/react-sdk": "^0.0.0-dev.24",
     "next-auth": "^4.24.11",
+    "openai": "^4.83.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
