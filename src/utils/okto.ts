@@ -16,27 +16,45 @@ const main = async () => {
     // Log in using Google OAuth and Okto Client
     const user = await oktoClient.loginUsingOAuth({
         idToken:
-            'eyJhbGciOiJSUzI1NiIsImtpZCI6ImVlYzUzNGZhNWI4Y2FjYTIwMWNhOGQwZmY5NmI1NGM1NjIyMTBkMWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTA3MjYxNDI5MjAxNzU2MjM1MzYiLCJoZCI6ImNvaW5kY3guY29tIiwiZW1haWwiOiJ2YWliaGF2LnBhbmRleUBjb2luZGN4LmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiX3RUX3dsdVg2S0JENm1jckc3REtJZyIsIm5hbWUiOiJWYWliaGF2IFBhbmRleSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLTzdHclFNU0RhVXZ1M2YxZkRjc3loXzRMYVN2QkMyV3BfS1hIazFXMGEzUmpYa3c9czk2LWMiLCJnaXZlbl9uYW1lIjoiVmFpYmhhdiIsImZhbWlseV9uYW1lIjoiUGFuZGV5IiwiaWF0IjoxNzM5MDEzMTAxLCJleHAiOjE3MzkwMTY3MDF9.cBO5RvXqmnXWVEc8nOFjQnYaeVnWgxah6maQujT3Wuq6Z_6_SzdjAhntiUEOSrY_gBEId_VOYJipZ3r2l8ipO-2uWt7z_CLzjIEMTGUa-6YlwZLx5wKOkIK47lI5P2UQMJAklq_v3FPLUtxHaWK4yfeTLuJuyij2tA4kGxBmTa7C8hW40QSzeDGvPO7u0aG6QOTC1dnnSE6pU3-8KsgzOuAm7YdRKTbzICwc3DxuuZDsgNTP7Wh_qrXnnznFMxQTX9IrYnBnrk_XKpySLPlZNHnmnMZd-qXQNzA6hJxlQeee9IlYVnYQYNY-nbZHjbmtvvJ553A-aLLwYiYohDbTzw',
+            'eyJhbGciOiJSUzI1NiIsImtpZCI6ImVlYzUzNGZhNWI4Y2FjYTIwMWNhOGQwZmY5NmI1NGM1NjIyMTBkMWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTA3MjYxNDI5MjAxNzU2MjM1MzYiLCJoZCI6ImNvaW5kY3guY29tIiwiZW1haWwiOiJ2YWliaGF2LnBhbmRleUBjb2luZGN4LmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiaGZqNnBVbWdDTzhGRE5nWWVTNEJTdyIsIm5hbWUiOiJWYWliaGF2IFBhbmRleSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLTzdHclFNU0RhVXZ1M2YxZkRjc3loXzRMYVN2QkMyV3BfS1hIazFXMGEzUmpYa3c9czk2LWMiLCJnaXZlbl9uYW1lIjoiVmFpYmhhdiIsImZhbWlseV9uYW1lIjoiUGFuZGV5IiwiaWF0IjoxNzM5MDE3MDc0LCJleHAiOjE3MzkwMjA2NzR9.hNdwcN3Ie1FSqjwyY9Fkhz2ZxdP3OypB08Dl5c3XB45O4hu8-3w6B3tFpl3ARr6pSsFiHZoIdXWvXAz__6MDlZBMmQa40bi_-DsT2u_K7-6pkfbNmm-r3KPmTTZrUhS9QeedqHzdeD16A6QaVMsJAQKWeqId2HgnMFfCojzXXYe8t53l-Lu7ZFiQyZDELOUFFwJn6nuuuOV3HN6nDWH2_CD4OgzR3mNfwdb5AxzvPGcNIQhD1r9ayPOnMMKgO4D-PuFOk_vkoZBgjPlR6MZdpo08DsVdV4WvfrruC8YXGdr8-heLha138gcDkW5rVK5iVDeIOM0Pa_MKjRtoAdvIVA',
         provider: 'google',
     })
     console.log('User: ', user);
 
-    const rawTx = await evmRawTransaction(oktoClient, {
+    // const rawTx = await evmRawTransaction(oktoClient, {
+    //     caip2Id: 'eip155:43114',
+    //     transaction: {
+    //         from: '0x55d70f37a7D69DD57BCf3D942a705E48991E5E81',
+    //         to: '0x8fe6b999dc680ccfdd5bf7eb0974218be2542daa',
+    //         value: 0,
+    //         data: '0x095ea7b30000000000000000000000006b25532e1060ce10cc3b0a99e5683b91bfde698200000000000000000000000000000000000000000000000000000000000186a0',
+    //     }
+    // })
+    // console.log('Raw Tx: ', rawTx);
+
+    // const signedRawTx = await oktoClient.signUserOp(rawTx)
+    // console.log('Signed Raw Tx: ', signedRawTx);    
+
+    // const jobId = await oktoClient.executeUserOp(signedRawTx)
+    // console.log('Job ID: ', jobId);
+
+    const rawTxForBurn = await evmRawTransaction(oktoClient, {
         caip2Id: 'eip155:43114',
         transaction: {
             from: '0x55d70f37a7D69DD57BCf3D942a705E48991E5E81',
-            to: '0x8fe6b999dc680ccfdd5bf7eb0974218be2542daa',
+            to: '0x6B25532e1060CE10cc3B0A99e5683b91BFDe6982',
             value: 0,
-            data: '0x095ea7b30000000000000000000000008fe6b999dc680ccfdd5bf7eb0974218be2542daa00000000000000000000000000000000000000000000000000000000000186a0',
+            data: '0x6fd3504e00000000000000000000000000000000000000000000000000000000000186a0000000000000000000000000000000000000000000000000000000000000000600000000000000000000000055d70f37a7d69dd57bcf3d942a705e48991e5e81000000000000000000000000b97ef9ef8734c71904d8002f8b6bc66dd9c48a6e',
         }
     })
-    console.log('Raw Tx: ', rawTx);
 
-    const signedRawTx = await oktoClient.signUserOp(rawTx)
-    console.log('Signed Raw Tx: ', signedRawTx);    
+    console.log('Raw Tx For Burn: ', rawTxForBurn); 
 
-    const jobId = await oktoClient.executeUserOp(signedRawTx)
-    console.log('Job ID: ', jobId);
+    const signedRawTxForBurn = await oktoClient.signUserOp(rawTxForBurn)
+    console.log('Signed Raw Tx For Burn: ', signedRawTxForBurn);
+
+    const jobIdForBurn = await oktoClient.executeUserOp(signedRawTxForBurn)
+    console.log('Job ID For Burn: ', jobIdForBurn);
 
     // // Verify login
     // const isLoggedIn = await oktoClient.verifyLogin()

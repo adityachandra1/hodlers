@@ -88,7 +88,7 @@ const SideBar = () => {
           }}
         >
           <Typography sx={{ fontSize: "1rem" }}>
-            Order ID: {order?.id || "N/A"}
+            Order ID: {order?.intentId || "N/A"}
           </Typography>
         </Box>
       ))}

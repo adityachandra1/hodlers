@@ -22,8 +22,8 @@ export default function Home() {
 
         try {
             const transferParams: any = {
-                amount: BigInt(amount),
-                recipient: "0xA76cF441BCd370EA47d64fc5B029BC22d8db3a48",
+                amount: amount,
+                recipient: recipient as `0x${string}`,
                 token: String(usdcAddresses[sourceChain]),
                 chain: `eip155:${chainIds[sourceChain]}`
             };

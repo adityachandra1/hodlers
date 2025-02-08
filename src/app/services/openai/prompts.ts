@@ -24,7 +24,7 @@ Only these chains are supported:
     'Sepolia',
     'Polygon',
     'Arbitrum',
-    'BaseSepolia',
+    'Base',
     'Bsc',
     'Optimism'
 ]

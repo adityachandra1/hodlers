@@ -95,7 +95,7 @@ export default function Home() {
               color: "white",
             }}
           >
-            <span style={{ color: "rgb(179, 138, 255)" }}>Crypto</span> Lingo
+            <span style={{ color: "rgb(179, 138, 255)" }}>Okto</span> Bridge
           </Typography>
         </Box>
 

@@ -17,10 +17,11 @@ function TransferTokens() {
   const [userOpString, setUserOpString] = useState<string>("");
 
   const handleSubmit = async () => {
-    const transferParams = {
-      amount: Number(quantity),
-      recipient: recipientAddress as Address,
-      token: tokenAddress as Address,
+    console.log(quantity, recipientAddress, tokenAddress, networkName);
+    const transferParams: any = {
+      amount: BigInt(quantity),
+      recipient: "0xA76cF441BCd370EA47d64fc5B029BC22d8db3a48",
+      token: `${tokenAddress}`,
       chain: networkName,
     }
 
