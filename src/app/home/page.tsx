@@ -26,26 +26,31 @@ export default function Home() {
     setMessages((prev: any) => [...prev, userMessage]);
     setLoading(true);
     try {
-      //   const res = await axios.post(`/api/process-user-query`, {
-      //     messages: [{ role: "user", content: prompt }],
-      //   });
-      const res = {
-        status: 200,
-        data: {
-          response: {
-            role: "assistant",
-            content: "string",
-            txn_details: {
-              hasRequiredFields: true,
-              amount: 100,
-              sourceChain: "Sepolia",
-              destinationChain: "Polygon",
-              destinationWalletAddress: "0xabcdef123456789",
-              comments: "Complete formal transfer request",
-            },
-          },
+      const res = await axios.post(`/api/process-user-query`, {
+        messages: [{ role: "user", content: prompt }],
+      },
+      {
+        headers: {
+          auth_id_token:  "",
         },
-      };
+      });
+      //   const res = {
+      //     status: 200,
+      //     data: {
+      //       response: {
+      //         role: "assistant",
+      //         content: "string",
+      //         txn_details: {
+      //           hasRequiredFields: true,
+      //           amount: 100,
+      //           sourceChain: "Sepolia",
+      //           destinationChain: "Polygon",
+      //           destinationWalletAddress: "0xabcdef123456789",
+      //           comments: "Complete formal transfer request",
+      //         },
+      //       },
+      //     },
+      //   };
       if (res.status === 200) {
         setMessages((prev: any) => [...prev, res.data.response]);
       }

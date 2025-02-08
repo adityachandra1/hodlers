@@ -96,16 +96,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
           key={index}
           sx={{
             maxWidth: "70%",
-            alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-            background: msg.role === "user" ? "rgb(71, 65, 137)" : "rgb(38, 5, 75)",
-            color: msg.role === "user" ? "#fff" : "rgb(231, 210, 255)",
+            alignSelf: msg?.role === "user" ? "flex-end" : "flex-start",
+            background: msg?.role === "user" ? "rgb(71, 65, 137)" : "rgb(38, 5, 75)",
+            color: msg?.role === "user" ? "#fff" : "rgb(231, 210, 255)",
             p: 2,
             borderRadius: "12px",
             wordBreak: "break-word",
           }}
         >
           <Typography variant="body1">{msg?.content}</Typography>
-          {msg.txn_details && (
+          {msg?.txn_details && (
             <Button
               sx={{
                 backgroundColor: "rgb(71, 65, 137)",
