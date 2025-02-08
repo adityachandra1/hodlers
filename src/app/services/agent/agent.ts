@@ -1,57 +1,19 @@
 import { openai, DEFAULT_MODEL, DEFAULT_TEMPERATURE } from '@/app/services/openai/config';
 import { JSON_SYSTEM_PROMPT, EXECUTE_TOKEN_TRANSFER_SYSTEM_PROMPT } from '@/app/services/openai/prompts';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
-import { ChatMessage } from '@/app/types/types';
+import { ChatMessage, AgentResponse } from '@/app/types/types';
+import { OpenAIService } from '../openai/openaiservice';
 
-export class OpenAIService {
-    static async getResponse(messages: ChatMessage[]): Promise<ChatMessage> {
+export class OktoAgent {
+    static async processQuery(messages: ChatMessage[]): Promise<AgentResponse> {
         try {
-            const completion = await openai.chat.completions.create({
-                model: DEFAULT_MODEL,
-                messages: messages as ChatCompletionMessageParam[],
-                temperature: DEFAULT_TEMPERATURE,
-                response_format: { type: "json_object" }
-            });
-
-            if (!completion.choices[0].message) {
-                throw new Error('No response from OpenAI');
-            }
-
-            const content = completion.choices[0].message.content;
-            if (!content) {
-                throw new Error('No content in OpenAI response');
-            }
-            
+            const response = await OpenAIService.getResponse(messages);
             return {
                 role: 'assistant',
-                content: JSON.parse(content),
-            };
-        } catch (error) {
-            console.error('OpenAI API Error:', error);
-            throw error;
-        }
-    }
-    
-    static async getSinglePromptResponse(prompt: string): Promise<ChatMessage> {
-        try {
-            const completion = await openai.chat.completions.create({
-                model: DEFAULT_MODEL,
-                messages: [{ role: 'system', content: prompt }] as ChatCompletionMessageParam[],
-                temperature: DEFAULT_TEMPERATURE,
-            });
-
-            if (!completion.choices[0].message) {
-                throw new Error('No response from OpenAI');
-            }
-
-            const content = completion.choices[0].message.content;
-            if (!content) {
-                throw new Error('No content in OpenAI response');
-            }
-
-            return {
-                role: 'assistant',
-                content: content,
+                content: {
+                    reply: response.content,
+                },
+                transactionConfirmed: false
             };
         } catch (error) {
             console.error('OpenAI API Error:', error);
