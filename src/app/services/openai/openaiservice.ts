@@ -3,12 +3,17 @@ import { JSON_SYSTEM_PROMPT, EXECUTE_TOKEN_TRANSFER_SYSTEM_PROMPT } from '@/app/
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { ChatMessage } from '@/app/types/types';
 
+const BASE_CONTEXT = {
+    role: 'system',
+    content: 'You are a TokenTransfer assistant which helps users to transfer tokens between different chains, by using OktoChain.'
+}
+
 export class OpenAIService {
-    static async getResponse(messages: ChatMessage[]): Promise<ChatMessage> {
+    static async getResponse(messages: ChatMessage[]): Promise<any> {
         try {
             const completion = await openai.chat.completions.create({
                 model: DEFAULT_MODEL,
-                messages: messages as ChatCompletionMessageParam[],
+                messages: [BASE_CONTEXT, ...messages] as ChatCompletionMessageParam[],
                 temperature: DEFAULT_TEMPERATURE,
                 response_format: { type: "json_object" }
             });
@@ -31,12 +36,44 @@ export class OpenAIService {
             throw error;
         }
     }
-    
+
     static async getSinglePromptResponse(prompt: string): Promise<ChatMessage> {
         try {
             const completion = await openai.chat.completions.create({
                 model: DEFAULT_MODEL,
-                messages: [{ role: 'system', content: prompt }] as ChatCompletionMessageParam[],
+                messages: [
+                    { role: 'user', content: `You are a JSON-only response bot. Always respond with valid JSON.\n${prompt}` }
+                ] as ChatCompletionMessageParam[],
+                temperature: DEFAULT_TEMPERATURE,
+                response_format: { type: "json_object" }
+            });
+
+            if (!completion.choices[0].message) {
+                throw new Error('No response from OpenAI');
+            }
+
+            const content = completion.choices[0].message.content;
+            if (!content) {
+                throw new Error('No content in OpenAI response');
+            }
+
+            return {
+                role: 'assistant',
+                content: content,
+            };
+        } catch (error) {
+            console.error('OpenAI API Error:', error);
+            throw error;
+        }
+    }
+
+    static async getSingleTextPromptResponse(prompt: string): Promise<ChatMessage> {
+        try {
+            const completion = await openai.chat.completions.create({
+                model: DEFAULT_MODEL,
+                messages: [
+                    { role: 'system', content: `${prompt}` }
+                ] as ChatCompletionMessageParam[],
                 temperature: DEFAULT_TEMPERATURE,
             });
 
@@ -63,7 +100,7 @@ export class OpenAIService {
         try {
             const completion = await openai.chat.completions.create({
                 model: DEFAULT_MODEL,
-                messages: [JSON_SYSTEM_PROMPT, ...messages] as ChatCompletionMessageParam[],
+                messages: [BASE_CONTEXT, JSON_SYSTEM_PROMPT, ...messages] as ChatCompletionMessageParam[],
                 temperature: DEFAULT_TEMPERATURE,
                 response_format: { type: "json_object" }
             });
@@ -87,7 +124,7 @@ export class OpenAIService {
         try {
             const completion = await openai.chat.completions.create({
                 model: DEFAULT_MODEL,
-                messages: messages as ChatCompletionMessageParam[],
+                messages: [BASE_CONTEXT, ...messages] as ChatCompletionMessageParam[],
                 temperature: DEFAULT_TEMPERATURE,
                 functions: [{
                     name: functionName,

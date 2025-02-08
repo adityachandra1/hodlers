@@ -11,22 +11,21 @@ export interface ProcessQueryRequest {
 }
 
 export interface ProcessQueryResponse {
-    result: ChatMessage;
+    result: QueryResponseObject;
     error?: string;
 }
 
-interface TransferContent {
+export interface QueryResponseObject {
+    role: 'assistant';
+    content: string;
+    txn_details?: TransferContent;
+}
+
+export interface TransferContent {
     hasRequiredFields: boolean;
     sourceChain: string;
     destinationChain: string;
     amount: number;
     destinationWalletAddress: string;
-}
-
-export interface AgentResponse {
-    role: 'assistant';
-    content: {
-        reply: string,
-    }
-    transactionConfirmed: boolean
+    comments: string;
 }

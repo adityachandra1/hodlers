@@ -9,18 +9,28 @@ export async function POST(
 ): Promise<NextResponse<ProcessQueryResponse>> {
     try {
         const body = await request.json() as ProcessQueryRequest;
-
         if (!body.messages || !Array.isArray(body.messages)) {
             return NextResponse.json(
-                { error: 'Invalid request format', result: { role: 'assistant', content: '' } },
+                {
+                    error: 'Invalid request format',
+                    result: {
+                        role: 'assistant',
+                        content: '',
+                    }
+                },
                 { status: 400 }
             );
         }
+
         const agentResponse = await OktoAgent.processQuery(body.messages);
+
+        console.log(agentResponse);
+
         const response: ProcessQueryResponse = {
             result: {
-                role: agentResponse.role,
-                content: agentResponse.content.reply
+                role: 'assistant',
+                content: agentResponse?.content,
+                txn_details: agentResponse?.txn_details
             }
         };
         return NextResponse.json(response);
@@ -32,3 +42,4 @@ export async function POST(
         );
     }
 }
+

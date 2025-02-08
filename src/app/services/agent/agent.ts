@@ -1,20 +1,122 @@
 import { openai, DEFAULT_MODEL, DEFAULT_TEMPERATURE } from '@/app/services/openai/config';
-import { JSON_SYSTEM_PROMPT, EXECUTE_TOKEN_TRANSFER_SYSTEM_PROMPT } from '@/app/services/openai/prompts';
+import { JSON_SYSTEM_PROMPT, GET_USER_INTENT_SYSTEM_PROMPT, EXECUTE_TOKEN_TRANSFER_SYSTEM_PROMPT } from '@/app/services/openai/prompts';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
-import { ChatMessage, AgentResponse } from '@/app/types/types';
+import { ChatMessage, TransferContent, QueryResponseObject } from '@/app/types/types';
 import { OpenAIService } from '../openai/openaiservice';
+import { completeCCTPTransfer } from '@/utils/cctp-transfer';
 
 export class OktoAgent {
-    static async processQuery(messages: ChatMessage[]): Promise<AgentResponse> {
+    static async getIntent(conversation: string): Promise<any> {
         try {
-            const response = await OpenAIService.getResponse(messages);
-            return {
-                role: 'assistant',
-                content: {
-                    reply: response.content,
-                },
-                transactionConfirmed: false
-            };
+            const prompt = GET_USER_INTENT_SYSTEM_PROMPT.content + conversation;
+            const response = await OpenAIService.getSinglePromptResponse(prompt);
+            return response;
+        }
+        catch (error) {
+            console.error('OpenAI API Error:', error);
+            throw error;
+        }
+    }
+
+    static async getResponse(conversation: string): Promise<string> {
+        try {
+            const prompt = "Go through the converstation history and respond to the user about their query in 2-3 lines" + conversation;
+            const response = await OpenAIService.getSinglePromptResponse(prompt);
+            return JSON.parse(response.content);
+        }
+        catch (error) {
+            console.error('OpenAI API Error:', error);
+            throw error;
+        }
+    }
+        
+    static async processQuery(messages: ChatMessage[]): Promise<any> {
+        try {
+            let conversation = '';
+            messages.forEach(message => {
+                conversation += `${message.role}: ${message.content}\n`;
+            });
+            console.log(conversation);
+            const userIntent = await OktoAgent.getIntent(conversation);
+            console.log(userIntent);
+            const parsedResponse = JSON.parse(userIntent.content);
+
+            switch (parsedResponse.intent) {
+                case 'TokenTransfer':
+                    return await OktoAgent.processTransfer(messages, conversation);
+                default:
+                    return await OktoAgent.getResponse(conversation);
+            }
+        } catch (error) {
+            console.error('OpenAI API Error:', error);
+            throw error;
+        }
+    }
+
+    static async processTransfer(messages: ChatMessage[], conversations: any): Promise<any> {
+        try {
+            const promptedMessages = [
+                ...messages, 
+                { role: 'system' as const, content: EXECUTE_TOKEN_TRANSFER_SYSTEM_PROMPT.content }
+            ]
+            const response = await OpenAIService.getResponse(promptedMessages);
+            const content = response.content as TransferContent;
+            console.log(response)
+            let responsePrompt = '';
+            if (content.hasRequiredFields === true) {
+                try {
+                    const txnIds = await completeCCTPTransfer(
+                        content.sourceChain,
+                        content.destinationChain,
+                        content.amount * 10 ** 6,
+                        content.destinationWalletAddress
+                    );
+                    responsePrompt = "Tell the user that the transaction has been placed successfully. The transaction hashes are: " + txnIds + "." + conversations;
+                    const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
+                    return {
+                        role: 'assistant',
+                        content: responseMessage.content,
+                        txn_details: {
+                            hasRequiredFields: content.hasRequiredFields,
+                            sourceChain: content.sourceChain,
+                            destinationChain: content.destinationChain,
+                            amount: content.amount,
+                            destinationWalletAddress: content.destinationWalletAddress,
+                            comments: content.comments
+                        }
+                    } as QueryResponseObject;
+                } catch (err) {
+                    responsePrompt = "Tell the user that the transaction has failed. " + err + "." + conversations;
+                    const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
+                    return {
+                        role: 'assistant',
+                        content: responseMessage.content,
+                        txn_details: {
+                            hasRequiredFields: content.hasRequiredFields,
+                            sourceChain: content.sourceChain,
+                            destinationChain: content.destinationChain,
+                            amount: content.amount,
+                            destinationWalletAddress: content.destinationWalletAddress,
+                            comments: content.comments
+                        }
+                    } as QueryResponseObject;
+                }
+            } else {
+                responsePrompt = "Tell the user that you need more information to complete the transfer: " + content.comments + "." + conversations;
+                const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
+                return {
+                    role: 'assistant',
+                    content: responseMessage.content,
+                    txn_details: {
+                        hasRequiredFields: content.hasRequiredFields,
+                        sourceChain: content.sourceChain,
+                        destinationChain: content.destinationChain,
+                        amount: content.amount,
+                        destinationWalletAddress: content.destinationWalletAddress,
+                        comments: content.comments
+                    }
+                } as QueryResponseObject;
+            }
         } catch (error) {
             console.error('OpenAI API Error:', error);
             throw error;

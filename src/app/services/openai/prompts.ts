@@ -10,12 +10,12 @@ Your goal is to build a token transfer system json object based on the user's qu
 
 Format for JSON Object:
 {
-    "hasRequiredFields": boolean,
-    "amount": number,
-    "sourceChain": string,
-    "destinationChain": string,
-    "destinationWalletAddress": string,
-    "comments": string
+    "hasRequiredFields": boolean,  // it should be true if all required fields are present and are valid
+    "amount": number, // it should be greater than 0 
+    "sourceChain": string, // it should be one of the supported chains map it yourself from the user query
+    "destinationChain": string, // it should be one of the supported chains map it yourself from the user query
+    "destinationWalletAddress": string, // it should be a valid wallet address
+    "comments": string // Include detailed comments about the transfer request
 }
 
 Only these chains are supported:
@@ -123,54 +123,50 @@ Response:
 
 
 
-export const GET_USER_INTENT_PROMPT = {
+export const GET_USER_INTENT_SYSTEM_PROMPT = {
     role: 'system',
-    content: `You are a JSON-only response bot. Always respond with valid JSON.
-    Your goal is to extract the user's intent from this conversation history and provide a JSON Object with a prompt that reflects the user's intent, and tells the LLM model what to do next.
+    content: `Your goal is to extract the user's intent from this conversation history and provide a response based on the detected intent.
 
     Supported Intents: ["TokenTransfer", "RespondToQuery"]
     
+    Your response should be a JSON object with a single "intent" field containing one of the supported intents.
 
-    Example:
+    Sample Examples:
+
+    Example 1:
     User: "I would like to initiate a transfer of 100 USDC tokens from my Ethereum wallet to the Polygon network, with the destination address being 0xabcdef123456789"
     Response:
-    {
-        "Intent": "TokenTransfer"
-    }
+    {"intent": "TokenTransfer"}
 
+    Example 2:
     User: "Can you help me transfer some tokens?"
     Assistant: "Sure, I can help with that. What are the details of the transfer?"
     User: "I want to send 50 USDT to my polygon wallet"
     Assistant: "To execute the transfer also provide source chain and destination wallet address, i can see the amount and destination chain"
     User: "50 USDT from Avalanche to Polygon, wallet is 0x123456789"
     Response:
-    {
-        "Intent": "TokenTransfer",
-    }
+    {"intent": "TokenTransfer"}
 
+    Example 3:
     User: "How many usdc do i have in my wallet?"
     Response:
-    {
-        "Intent": "RespondToQuery"
-    }
+    {"intent": "RespondToQuery"}
+
     User: "I want to partially transfer 200 tokens from Avalanche to Bsc, but I might split it into multiple smaller transactions."
     Response:
-    {
-        "Intent": "TokenTransfer"
-    }
+    {"intent": "TokenTransfer"}
 
     User: "Could you also tell me how many tokens remain on Avalanche after transferring 50 tokens to Bsc?"
     Response:
-    {
-        "Intent": "RespondToQuery"
-    }
+    {"intent": "RespondToQuery"}
 
-    User: "I’d like to bridge 120 tokens from Sepolia to Arbitrum, then confirm my new Arbitrum balance."
+    User: "I'd like to bridge 120 tokens from Sepolia to Arbitrum, then confirm my new Arbitrum balance."
     Response:
-    {
-        "Intent": "TokenTransfer"
-    }
-        `
+    {"intent": "TokenTransfer"}
+    
+    Now Respond to:
+    
+    `
 };
 
 function buildContextPrompt(userAccountDetails, chainDetails, orderHistory, portfolioDetails, portfolioActivity, tokenDetails) {
@@ -236,7 +232,10 @@ ${technicalDetails}
 
 export const createContextPrompt = (userAccountDetails: any, chainDetails: any, orderHistory: any, portfolioDetails: any, portfolioActivity: any, tokenDetails: any) => ({
     role: 'system',
-    content: `For your context these are the details of the user, you can use this information to provide a more personalized response.
+    content: `
+    Okto chain is a multi-chain token transfer platform that allows users to transfer tokens between different blockchain networks. You are an assistant that helps users with token transfers and provides information about their account and portfolio, and places orders on their behalf.
+
+    For your context these are the details of the user, you can use this information to provide a more personalized response.
     ${buildContextPrompt(userAccountDetails, chainDetails, orderHistory, portfolioDetails, portfolioActivity, tokenDetails)}
     `
 });
