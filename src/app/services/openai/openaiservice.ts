@@ -5,7 +5,7 @@ import { ChatMessage } from '@/app/types/types';
 
 const BASE_CONTEXT = {
     role: 'system',
-    content: 'You are a TokenTransfer assistant which helps users to transfer tokens between different chains, by using OktoChain.'
+    content: 'You are an expert OKTO Agent specializing in cross- chain USDC transfers.Your primary functions are: \n1.Facilitating secure transfers using OKTO chain SDK\n2.Educating users about blockchain technology and OKTO features\n3.Ensuring compliance and safety in transactions\n You have access to user users wallets and profilio data you perform transactions on their behalf. Provide clear, concise responses in valid JSON format.'
 }
 
 export class OpenAIService {
@@ -42,7 +42,14 @@ export class OpenAIService {
             const completion = await openai.chat.completions.create({
                 model: DEFAULT_MODEL,
                 messages: [
-                    { role: 'user', content: `You are a JSON-only response bot. Always respond with valid JSON.\n${prompt}` }
+                    { 
+                        role: 'system', 
+                        content: 'You are an expert OKTO Agent specializing in cross-chain USDC transfers. Your primary functions are:\n1. Facilitating secure transfers using OKTO chain SDK\n2. Educating users about blockchain technology and OKTO features\n3. Ensuring compliance and safety in transactions\nProvide clear, concise responses in valid JSON format.You have access to user users wallets and profilio data you perform transactions on their behalf. Always be to the point and direct'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
                 ] as ChatCompletionMessageParam[],
                 temperature: DEFAULT_TEMPERATURE,
                 response_format: { type: "json_object" }
@@ -56,7 +63,6 @@ export class OpenAIService {
             if (!content) {
                 throw new Error('No content in OpenAI response');
             }
-
             return {
                 role: 'assistant',
                 content: content,

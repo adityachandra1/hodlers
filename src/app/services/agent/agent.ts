@@ -18,11 +18,16 @@ export class OktoAgent {
         }
     }
 
-    static async getResponse(conversation: string): Promise<string> {
+    static async getResponse(conversation: string): Promise<any> {
         try {
-            const prompt = "Go through the converstation history and respond to the user about their query in 2-3 lines" + conversation;
+            const prompt = "Go through the converstation history and respond to the user about their query in 2-3 lines: " + conversation;
+            console.log(prompt)
             const response = await OpenAIService.getSinglePromptResponse(prompt);
-            return JSON.parse(response.content);
+            return {
+                role: 'assistant',
+                content: JSON.parse(response.content).response,
+                txn_details: null
+            }
         }
         catch (error) {
             console.error('OpenAI API Error:', error);
@@ -79,7 +84,7 @@ export class OktoAgent {
                         comments: content.comments
                     }
                 } as QueryResponseObject
-                
+
                 // try {
                     // const txnIds = await completeCCTPTransfer(
                     //     content.sourceChain,
