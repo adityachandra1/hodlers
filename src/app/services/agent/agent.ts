@@ -64,43 +64,59 @@ export class OktoAgent {
             console.log(response)
             let responsePrompt = '';
             if (content.hasRequiredFields === true) {
-                try {
-                    const txnIds = await completeCCTPTransfer(
-                        content.sourceChain,
-                        content.destinationChain,
-                        content.amount * 10 ** 6,
-                        content.destinationWalletAddress
-                    );
-                    responsePrompt = "Tell the user that the transaction has been placed successfully. The transaction hashes are: " + txnIds + "." + conversations;
-                    const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
-                    return {
-                        role: 'assistant',
-                        content: responseMessage.content,
-                        txn_details: {
-                            hasRequiredFields: content.hasRequiredFields,
-                            sourceChain: content.sourceChain,
-                            destinationChain: content.destinationChain,
-                            amount: content.amount,
-                            destinationWalletAddress: content.destinationWalletAddress,
-                            comments: content.comments
-                        }
-                    } as QueryResponseObject;
-                } catch (err) {
-                    responsePrompt = "Tell the user that the transaction has failed. " + err + "." + conversations;
-                    const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
-                    return {
-                        role: 'assistant',
-                        content: responseMessage.content,
-                        txn_details: {
-                            hasRequiredFields: content.hasRequiredFields,
-                            sourceChain: content.sourceChain,
-                            destinationChain: content.destinationChain,
-                            amount: content.amount,
-                            destinationWalletAddress: content.destinationWalletAddress,
-                            comments: content.comments
-                        }
-                    } as QueryResponseObject;
-                }
+                responsePrompt = "Confirm with the user the transaction details, and if they want to proceed with the txn" + conversations;
+
+                const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
+                return {
+                    role: 'assistant',
+                    content: responseMessage.content,
+                    txn_details: {
+                        hasRequiredFields: content.hasRequiredFields,
+                        sourceChain: content.sourceChain,
+                        destinationChain: content.destinationChain,
+                        amount: content.amount,
+                        destinationWalletAddress: content.destinationWalletAddress,
+                        comments: content.comments
+                    }
+                } as QueryResponseObject
+                
+                // try {
+                    // const txnIds = await completeCCTPTransfer(
+                    //     content.sourceChain,
+                    //     content.destinationChain,
+                    //     content.amount * 10 ** 6,
+                    //     content.destinationWalletAddress
+                    // );
+                    // responsePrompt = "Tell  " + txnIds + "." + conversations;
+                    // const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
+                    // return {
+                    //     role: 'assistant',
+                    //     content: responseMessage.content,
+                    //     txn_details: {
+                    //         hasRequiredFields: content.hasRequiredFields,
+                    //         sourceChain: content.sourceChain,
+                    //         destinationChain: content.destinationChain,
+                    //         amount: content.amount,
+                    //         destinationWalletAddress: content.destinationWalletAddress,
+                    //         comments: content.comments
+                    //     }
+                    // } as QueryResponseObject;
+                // } catch (err) {
+                //     responsePrompt = "Tell the user that the transaction has failed. " + err + "." + conversations;
+                //     const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);
+                //     return {
+                //         role: 'assistant',
+                //         content: responseMessage.content,
+                //         txn_details: {
+                //             hasRequiredFields: content.hasRequiredFields,
+                //             sourceChain: content.sourceChain,
+                //             destinationChain: content.destinationChain,
+                //             amount: content.amount,
+                //             destinationWalletAddress: content.destinationWalletAddress,
+                //             comments: content.comments
+                //         }
+                //     } as QueryResponseObject;
+                // }
             } else {
                 responsePrompt = "Tell the user that you need more information to complete the transfer: " + content.comments + "." + conversations;
                 const responseMessage = await OpenAIService.getSingleTextPromptResponse(responsePrompt);

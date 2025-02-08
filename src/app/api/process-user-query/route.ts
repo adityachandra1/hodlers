@@ -21,6 +21,7 @@ export async function POST(
                 { status: 400 }
             );
         }
+        console.log(body.messages)
 
         const agentResponse = await OktoAgent.processQuery(body.messages);
 

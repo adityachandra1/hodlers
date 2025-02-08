@@ -6,12 +6,12 @@ export interface Message {
   role: "assistant" | "user";
   content: string;
   txn_details?: {
-    hasRequiredFields: boolean;
-    amount: number;
-    sourceChain: string;
-    destinationChain: string;
-    destinationWalletAddress: string;
-    comments: string;
+    hasRequiredFields?: boolean;
+    amount?: number;
+    sourceChain?: string;
+    destinationChain?: string;
+    destinationWalletAddress?: string;
+    comments?: string;
   };
 }
 
@@ -23,7 +23,6 @@ interface ChatBoxProps {
 const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [selectedTxn, setSelectedTxn] = useState<Message["txn_details"] | null>(null);
-
 
   const handleConfirm = async () => {
     setIsDialogOpen(false);
@@ -87,7 +86,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
           </Typography>
         </Box>
       )}
-
       {messages?.map((msg, index) => (
         
         <Box

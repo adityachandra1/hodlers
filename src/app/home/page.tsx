@@ -25,7 +25,7 @@ export default function Home() {
     setLoading(true);
     try {
       const res = await axios.post(`/api/process-user-query`, {
-        messages: [{ role: "user", content: prompt }],
+        messages: [ ...messages, userMessage],
       },
       {
         headers: {
@@ -99,6 +99,26 @@ export default function Home() {
           </Typography>
         </Box>
 
+         <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0,
+            mb: 10,
+            mt: -3,
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "'Orbitron', sans-serif",
+              color: "white",
+            }}
+          >
+            <span>End to End Cross Chain Support Through Natural Language</span>
+          </Typography>
+        </Box>
+
+
         <Box
           display="flex"
           flexDirection="column"
@@ -113,7 +133,7 @@ export default function Home() {
               variant="outlined"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="I want to transfer $200 SOL to 0xA1B2C3D4E5F6789012345...."
+              placeholder="I want to transfer 100USDC from Avalanche to Polygon"
               sx={{
                 input: { color: "white", paddingLeft: "24px" },
                 "& .MuiOutlinedInput-root": {

@@ -22,10 +22,10 @@ export interface QueryResponseObject {
 }
 
 export interface TransferContent {
-    hasRequiredFields: boolean;
-    sourceChain: string;
-    destinationChain: string;
-    amount: number;
-    destinationWalletAddress: string;
-    comments: string;
+    hasRequiredFields?: boolean;
+    sourceChain?: string;
+    destinationChain?: string;
+    amount?: number;
+    destinationWalletAddress?: string;
+    comments?: string;
 }
