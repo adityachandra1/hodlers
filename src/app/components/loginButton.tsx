@@ -13,7 +13,7 @@ export function LoginButton() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/home");
+      // router.push("/home");
     }
   }, [status, router]);
 
