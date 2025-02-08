@@ -1,34 +1,25 @@
 import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button } from "@mui/material";
 import React from "react";
-
-interface WalletAddresses {
-  sender: string;
-  receiver: string;
-}
-
-interface Amount {
-  value: number;
-  currency: string;
-}
-
-interface Payload {
-  fromChain: string;
-  toChain: string;
-  walletAddresses?: WalletAddresses;
-  amount?: Amount;
-}
+import { Message } from "./chatBox";
 
 interface TransactionDialogProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
-  payload: Payload;
+  txnDetails?: {
+    hasRequiredFields: boolean;
+    amount: number;
+    sourceChain: string;
+    destinationChain: string;
+    destinationWalletAddress: string;
+    comments: string;
+  };
   handleConfirm: () => void;
 }
 
 const TransactionDialog: React.FC<TransactionDialogProps> = ({
   isDialogOpen,
   setIsDialogOpen,
-  payload,
+  txnDetails,
   handleConfirm,
 }) => {
   return (
@@ -51,23 +42,23 @@ const TransactionDialog: React.FC<TransactionDialogProps> = ({
       <DialogContent sx={{ color: "rgb(197, 197, 197)", padding: 3 }}>
         <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
           <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>From:</span>
-          {payload?.fromChain}
+          {txnDetails?.sourceChain}
         </Typography>
         <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
           <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>To:</span>
-          {payload?.toChain}
+          {txnDetails?.destinationChain}
         </Typography>
         <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
           <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>Sender:</span>
-          {payload?.walletAddresses?.sender}
-        </Typography>
-        <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
-          <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>Receiver:</span>
-          {payload?.walletAddresses?.receiver}
+          {txnDetails?.destinationWalletAddress}
         </Typography>
         <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
           <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>Amount:</span>
-          {payload?.amount?.value} {payload?.amount?.currency}
+          {txnDetails?.amount} 
+        </Typography>
+        <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
+          <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>Comments:</span>
+          {txnDetails?.comments} 
         </Typography>
       </DialogContent>
 
