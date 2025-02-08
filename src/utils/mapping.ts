@@ -25,3 +25,13 @@ export const usdcAddresses: UsdcAddresses = {
     Bsc: '0x55d398326f99059ff775485246999027b3197955',
     Optimism: '0x5fd84259d66Cd46123540766Be93DFE6D43130D7',
 }
+
+export const chainIds = {
+    Avalanche: 43114,
+    Sepolia: 11155111,
+    Polygon: 137,
+    Arbitrum: 42161,
+    BaseSepolia: 84532,
+    Bsc: 97,
+    Optimism: 10,
+}

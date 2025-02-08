@@ -6,6 +6,10 @@ interface UsdcAddresses {
     [key: string]: string;
 }
 
+interface ChainIds {
+    [key: string]: number;
+}
+
 export const rpcMap: RpcMap = {
     Avalanche: 'https://avax-mainnet.g.alchemy.com/v2/B0RgFDK3Iup5ctn0olfVUXv2f9A7W6-4',
     Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/B0RgFDK3Iup5ctn0olfVUXv2f9A7W6-4',
@@ -24,4 +28,14 @@ export const usdcAddresses: UsdcAddresses = {
     Base: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
     Bsc: '0x55d398326f99059ff775485246999027b3197955',
     Optimism: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+}
+
+export const chainIds = {
+    Avalanche: 43114,
+    Ethereum: 1,
+    Polygon: 137,
+    Arbitrum: 42161,
+    Base: 8453,
+    Bsc: 56,
+    Optimism: 10,
 }

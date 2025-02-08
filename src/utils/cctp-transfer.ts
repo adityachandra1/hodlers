@@ -6,7 +6,7 @@ import { walletOktoTransfer } from './wallet-okto-transfer';
 
 export const completeCCTPTransfer = async function (sourceChain: any, destinationChain: any, smallestUnit: any, recipient: any) {
 	// Initialize the Wormhole object for the Testnet environment and add supported chains (evm and solana)
-	const wh = await wormhole('Testnet', [evm, solana]);
+	const wh = await wormhole('Mainnet', [evm, solana]);
 
 	// Grab chain Contexts -- these hold a reference to a cached rpc client
 	const sendChain = wh.getChain(sourceChain);
@@ -40,12 +40,12 @@ export const completeCCTPTransfer = async function (sourceChain: any, destinatio
 
 	// Step 3: Complete the transfer on the destination chain (Sepolia)
 	console.log('Completing Transfer');
-	const dstTxids = await xfer.completeTransfer(destination.signer);
+	let dstTxids = await xfer.completeTransfer(destination.signer);
 	console.log(`Completed Transfer: `, dstTxids);
 
 	console.log('Circle Transfer status: ', xfer);
 
-    const finalTxn = await walletOktoTransfer(recipient, amt, destinationChain);
+    dstTxids = await walletOktoTransfer(recipient, amt, destinationChain);
 
-    return finalTxn;
+    return dstTxids;
 };

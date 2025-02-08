@@ -1,6 +1,6 @@
 import { OktoClient } from "@okto_web3/core-js-sdk";
 import { getAccount, getPortfolio, getChains, getTokens, getPortfolioActivity, getPortfolioNFT, getNftCollections, getOrdersHistory } from "@okto_web3/core-js-sdk/explorer";
-import { tokenTransfer, nftTransfer } from "@okto_web3/core-js-sdk/userop";
+import { tokenTransfer, nftTransfer, evmRawTransaction } from "@okto_web3/core-js-sdk/userop";
 // import { Env } from "@okto_web3/core-js-sdk/dist/core/types";
 
 const main = async () => {
@@ -16,10 +16,27 @@ const main = async () => {
     // Log in using Google OAuth and Okto Client
     const user = await oktoClient.loginUsingOAuth({
         idToken:
-            'eyJhbGciOiJSUzI1NiIsImtpZCI6ImVlYzUzNGZhNWI4Y2FjYTIwMWNhOGQwZmY5NmI1NGM1NjIyMTBkMWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTA3MjYxNDI5MjAxNzU2MjM1MzYiLCJoZCI6ImNvaW5kY3guY29tIiwiZW1haWwiOiJ2YWliaGF2LnBhbmRleUBjb2luZGN4LmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiZG9VdjhJc1lFd2ZNSS1Kcl9PeUh5USIsIm5hbWUiOiJWYWliaGF2IFBhbmRleSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLTzdHclFNU0RhVXZ1M2YxZkRjc3loXzRMYVN2QkMyV3BfS1hIazFXMGEzUmpYa3c9czk2LWMiLCJnaXZlbl9uYW1lIjoiVmFpYmhhdiIsImZhbWlseV9uYW1lIjoiUGFuZGV5IiwiaWF0IjoxNzM4OTQ1MDAxLCJleHAiOjE3Mzg5NDg2MDF9.tGVJ-lZjBQrnCndIIaUoT10z80JLfDoPxSFcdpymI4tAghR0l4WEOS9yPhYV5tr44XaYPh6jSKi1FMdsjFVSHtb2lfj9jyMCu_MFOjWDOmCXkaLl-k_fnv-B3DEC474oEy0zRR0qBYa3exRLAOeJ155inTP2mq2hZxrRnuoNLdOW8x2nhHTJFJk9RQrjWwJyBM5AJQg0_btdZyEoFSjFukbE0lv9_z0IaYMpHOBMc_1Vy17B3LyVJL-NCvjoM1oSDyDvto0kx1Lub6ouQlBD_dNXUGn1-WG5aCndBx8QYlfak2biFWggjwXoqpID7fN8oi_i2zFo4p7hGcOjuo39Pg',
+            'eyJhbGciOiJSUzI1NiIsImtpZCI6ImVlYzUzNGZhNWI4Y2FjYTIwMWNhOGQwZmY5NmI1NGM1NjIyMTBkMWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTA3MjYxNDI5MjAxNzU2MjM1MzYiLCJoZCI6ImNvaW5kY3guY29tIiwiZW1haWwiOiJ2YWliaGF2LnBhbmRleUBjb2luZGN4LmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiX3RUX3dsdVg2S0JENm1jckc3REtJZyIsIm5hbWUiOiJWYWliaGF2IFBhbmRleSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLTzdHclFNU0RhVXZ1M2YxZkRjc3loXzRMYVN2QkMyV3BfS1hIazFXMGEzUmpYa3c9czk2LWMiLCJnaXZlbl9uYW1lIjoiVmFpYmhhdiIsImZhbWlseV9uYW1lIjoiUGFuZGV5IiwiaWF0IjoxNzM5MDEzMTAxLCJleHAiOjE3MzkwMTY3MDF9.cBO5RvXqmnXWVEc8nOFjQnYaeVnWgxah6maQujT3Wuq6Z_6_SzdjAhntiUEOSrY_gBEId_VOYJipZ3r2l8ipO-2uWt7z_CLzjIEMTGUa-6YlwZLx5wKOkIK47lI5P2UQMJAklq_v3FPLUtxHaWK4yfeTLuJuyij2tA4kGxBmTa7C8hW40QSzeDGvPO7u0aG6QOTC1dnnSE6pU3-8KsgzOuAm7YdRKTbzICwc3DxuuZDsgNTP7Wh_qrXnnznFMxQTX9IrYnBnrk_XKpySLPlZNHnmnMZd-qXQNzA6hJxlQeee9IlYVnYQYNY-nbZHjbmtvvJ553A-aLLwYiYohDbTzw',
         provider: 'google',
     })
     console.log('User: ', user);
+
+    const rawTx = await evmRawTransaction(oktoClient, {
+        caip2Id: 'eip155:43114',
+        transaction: {
+            from: '0x55d70f37a7D69DD57BCf3D942a705E48991E5E81',
+            to: '0x8fe6b999dc680ccfdd5bf7eb0974218be2542daa',
+            value: 0,
+            data: '0x095ea7b30000000000000000000000008fe6b999dc680ccfdd5bf7eb0974218be2542daa00000000000000000000000000000000000000000000000000000000000186a0',
+        }
+    })
+    console.log('Raw Tx: ', rawTx);
+
+    const signedRawTx = await oktoClient.signUserOp(rawTx)
+    console.log('Signed Raw Tx: ', signedRawTx);    
+
+    const jobId = await oktoClient.executeUserOp(signedRawTx)
+    console.log('Job ID: ', jobId);
 
     // // Verify login
     // const isLoggedIn = await oktoClient.verifyLogin()
@@ -28,10 +45,6 @@ const main = async () => {
     // // Generate authorization token
     // const authToken = await oktoClient.getAuthorizationToken()
     // console.log('Auth Token: ', authToken);
-
-    // Get your wallets
-    const wallets = await getAccount(oktoClient)
-    console.log('Wallets: ', wallets);
 
     // // Check your portfolio
     // const portfolio = await getPortfolio(oktoClient)
@@ -56,15 +69,6 @@ const main = async () => {
     // // Get NFT Collections
     // const nftCollections = await getNftCollections(oktoClient)
     // console.log('NFT Collections: ', nftCollections);
-
-    // Transfer tokens
-    const transferTokensUserOp = await tokenTransfer(oktoClient, {
-        amount: 0,
-        recipient: '0x0000000000000000000000000000000000000000',
-        token: '',
-        chain: 'eip155:137',
-    })
-    console.log('Transfer Tokens UserOp: ', transferTokensUserOp);
 
     // const signedTransferTokensUserOp = await oktoClient.signUserOp(transferTokensUserOp)
     // console.log('Signed Transfer Tokens UserOp: ', signedTransferTokensUserOp);
