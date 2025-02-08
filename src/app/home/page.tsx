@@ -34,25 +34,9 @@ export default function Home() {
           auth_id_token:  "",
         },
       });
-      //   const res = {
-      //     status: 200,
-      //     data: {
-      //       response: {
-      //         role: "assistant",
-      //         content: "string",
-      //         txn_details: {
-      //           hasRequiredFields: true,
-      //           amount: 100,
-      //           sourceChain: "Sepolia",
-      //           destinationChain: "Polygon",
-      //           destinationWalletAddress: "0xabcdef123456789",
-      //           comments: "Complete formal transfer request",
-      //         },
-      //       },
-      //     },
-      //   };
       if (res.status === 200) {
-        setMessages((prev: any) => [...prev, res.data.response]);
+        console.log(res.data)
+        setMessages((prev: any) => [...prev, res.data.result]);
       }
     } catch (error) {
       console.error("Error:", error);

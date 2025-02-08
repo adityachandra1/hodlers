@@ -24,6 +24,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [selectedTxn, setSelectedTxn] = useState<Message["txn_details"] | null>(null);
 
+
   const handleConfirm = async () => {
     setIsDialogOpen(false);
     try {
@@ -92,6 +93,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
       )}
 
       {messages?.map((msg, index) => (
+        
         <Box
           key={index}
           sx={{
@@ -105,7 +107,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
           }}
         >
           <Typography variant="body1">{msg?.content}</Typography>
-          {msg?.txn_details && (
+          {msg?.txn_details.hasRequiredFields && (
             <Button
               sx={{
                 backgroundColor: "rgb(71, 65, 137)",
