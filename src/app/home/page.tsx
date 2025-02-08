@@ -1,13 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
   TextField,
   Button,
   Box,
   Typography,
-  Paper,
-  CircularProgress,
 } from "@mui/material";
 import ChatBox from "../components/chatBox";
 import SideBar from "../components/sideBar";
@@ -46,6 +44,22 @@ export default function Home() {
       setPrompt("");
     }
   };
+
+  useEffect(() => {
+    const fetchSession = async () => {
+        try {
+          const response = await axios.get("/api/auth/session");
+          const idToken = response.data?.id_token;
+          if (idToken) {
+            localStorage.setItem("jwt", idToken);
+          }
+        } catch (error) {
+          console.error("Error fetching session:", error);
+        }
+    };
+
+    fetchSession();
+  });
 
   return (
     <div style={{ display: "flex" }}>

@@ -1,7 +1,7 @@
 import { Paper, Box, Typography, Button } from "@mui/material";
 import React, { useState } from "react";
 import TransactionDialog from "./getDialog";
-
+import axios from "axios";
 export interface Message {
   role: "assistant" | "user";
   content: string;
@@ -28,18 +28,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
   const handleConfirm = async () => {
     setIsDialogOpen(false);
     try {
-      const res = {
-        status: 200,
-        data: {
-          response: {
-            role: "assistant",
-            content: {
-              reply:
-                "To transfer USDC from Avalanche (AVAX) to Binance Smart Chain (BSC), you can use a cross-chain bridge...",
-            },
-          },
-        },
-      };
+     const res = await axios.post(`/api/cctp-transfer`, {
+      source : selectedTxn.sourceChain, destination : selectedTxn.destinationChain , amount: selectedTxn.amount, recipient : selectedTxn.destinationWalletAddress
+     },
+    {
+      headers : {
+        auth_id_token: localStorage.getItem("jwt"),
+      }
+    });
       if(res.status === 200){
         alert("Transaction Completed successfully")
       }
@@ -107,7 +103,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
           }}
         >
           <Typography variant="body1">{msg?.content}</Typography>
-          {msg?.txn_details.hasRequiredFields && (
+          {msg?.txn_details?.hasRequiredFields && (
             <Button
               sx={{
                 backgroundColor: "rgb(71, 65, 137)",

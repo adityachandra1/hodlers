@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export function LoginButton() {
-  const { data: session, status } = useSession();
+  const { data: session, status, data } = useSession();
   const router = useRouter();
 
   const handleLogin = () => {
