@@ -6,10 +6,9 @@ import { completeCCTPTransfer } from "@/utils/cctp-transfer";
 export async function POST(request: Request) {
     try {
         const { source, destination, amount, recipient } = await request.json();
-        const smallestUnit = ethers.parseUnits(amount, 6); // 6 decimals for USDC
-        console.log(source, destination, smallestUnit, recipient);
+        console.log(source, destination, amount, recipient);
         
-        const txids = await completeCCTPTransfer(source, destination, smallestUnit, recipient);
+        const txids = await completeCCTPTransfer(source, destination, amount, recipient);
         return NextResponse.json({ message: `TxIds: ${txids}`, status: 200 });
     } catch (error) {
         console.error('Error in CCTP transfer:', error);

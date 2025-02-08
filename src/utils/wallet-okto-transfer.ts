@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { rpcMap, usdcAddresses } from "./mapping";
+import { rpcMap, usdcAddresses } from "./mainnet-mapping";
 
 
 export const walletOktoTransfer = async function (recipient: any, amount: any, destinationChain: any) {
