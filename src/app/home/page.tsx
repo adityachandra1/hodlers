@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -7,17 +7,15 @@ import {
   Box,
   Typography,
   Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CircularProgress,
-  Divider,
 } from "@mui/material";
+import TransactionDialog from "../components/getDialog";
+import { Chat } from "openai/resources/index.mjs";
+import ChatBox from "../components/chatBox";
 
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("");
-  const [responses, setResponses] = useState<any>({});
+  const [messages, setMessages] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [payload, setPayload] = useState<any>({});
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -26,33 +24,29 @@ export default function Home() {
     if (!prompt.trim()) {
       alert("Please enter a valid prompt");
       return;
-    };
+    }
+    const userMessage = { role: "user", content: { reply: prompt } };
+    setMessages((prev: any) => [...prev, userMessage]);
     setLoading(true);
     try {
-      // const res = await axios.post(`${BACKEND_URL}/api/submit`, { prompt });
+      //   const res = await axios.post(`/api/process-user-query`, {
+      //     messages: [{ role: "user", content: prompt }],
+      //   });
       const res = {
         status: 200,
         data: {
-          response: "Transaction completed successfully",
-          toChain: "Ethereum",
-          fromChain: "Binance Smart Chain",
-          walletAddresses: {
-            sender: "0x1234567890abcdef1234567890abcdef12345678",
-            receiver: "0xabcdef1234567890abcdef1234567890abcdef12",
+          response: {
+            role: "assistant",
+            content: {
+              reply:
+                "To transfer USDC from Avalanche (AVAX) to Binance Smart Chain (BSC), you can use a cross-chain bridge. Ensure you have compatible wallets on both chains and follow the bridge instructions. For transferring USDC to the Base network, you will need to use an appropriate bridge or exchange that supports Base. Make sure to double-check all addresses and transaction details.",
+            },
           },
-          amount: {
-            value: "10.5",
-            currency: "USDT",
-          },
-          transactionId: "0xabcdef1234567890abcdef1234567890abcdefabcd",
-          timestamp: "2025-02-07T18:30:00Z",
-          status: "success",
         },
       };
       if (res.status === 200) {
-        setPayload(res.data);
-        setIsDialogOpen(true);
-      }
+        setMessages((prev: any) => [...prev, res.data.response]);
+    }
     } catch (error) {
       console.error("Error:", error);
       alert("Error processing request");
@@ -71,12 +65,15 @@ export default function Home() {
         status: 200,
         data: {
           response: {
-            tx_hash: "dfwee45rtfgvhuijodmfv234er5tWDEFDWEGHGFDS",
-            chain: "OKTO",
+            role: "assistant",
+            content: {
+              reply:
+                "To transfer USDC from Avalanche (AVAX) to Binance Smart Chain (BSC), you can use a cross-chain bridge. Ensure you have compatible wallets on both chains and follow the bridge instructions. For transferring USDC to the Base network, you will need to use an appropriate bridge or exchange that supports Base. Make sure to double-check all addresses and transaction details.",
+            },
           },
         },
       };
-      setResponses(res.data.response);
+      setMessages(res.data.response);
     } catch (error) {
       console.error("Error:", error);
       alert("Transaction failed");
@@ -105,7 +102,7 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           gap: 3,
-          mb: 8,
+          mb: 6,
           mt: 2,
         }}
       >
@@ -159,7 +156,9 @@ export default function Home() {
 
           <Button
             variant="contained"
-            onClick={handleSubmitPrompt}
+            onClick={() => {
+              handleSubmitPrompt();
+            }}
             disabled={loading}
             sx={{
               background:
@@ -181,151 +180,14 @@ export default function Home() {
         </Box>
       </Box>
 
-      <Paper
-        sx={{
-          width: "100%",
-          maxWidth: "800px",
-          minHeight: "300px",
-          overflowY: "auto",
-          borderRadius: "12px",
-          position: "relative",
-          background: "rgba(0, 0, 0, 0.61)",
-          color: "rgb(189, 189, 189)",
-          p: 2,
-        }}
-      >
-        {loading && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "300px",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-          >
-            <CircularProgress sx={{ color: "#B968C7" }} />
-          </Box>
-        )}
+      <ChatBox loading={loading} messages={messages} />
 
-        {responses && (
-          <Typography
-            sx={{
-              p: 4,
-              pb: 1,
-              mb: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            <div>
-              <span style={{ fontSize: "1.5rem", marginRight: "10px" }}>
-                Tx Hash:{" "}
-              </span>
-              {responses.tx_hash}
-            </div>
-            <div>
-              {" "}
-              <span style={{ fontSize: "1.5rem", marginRight: "10px" }}>
-                Chain:
-              </span>
-              {responses.chain}
-            </div>
-          </Typography>
-        )}
-      </Paper>
-
-      {/* Dialog Box */}
-      <Dialog
-        open={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        sx={{
-          "& .MuiPaper-root": {
-            background: "linear-gradient(135deg,rgb(26, 4, 61),rgb(16, 7, 29))",
-            color: "white",
-          },
-          padding: 2,
-        }}
-      >
-        <DialogTitle
-          sx={{ fontWeight: "semibold", color: "rgb(211, 211, 211)" }}
-        >
-          Are you sure you want to proceed with the transaction?
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            color: "rgb(197, 197, 197)",
-            padding: 3,
-          }}
-        >
-          <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
-            <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>
-              From:
-            </span>
-            {payload.fromChain}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
-            <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>
-              To:
-            </span>
-            {payload.toChain}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
-            <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>
-              Sender:
-            </span>
-            {payload.walletAddresses?.sender}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
-            <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>
-              Receiver:
-            </span>
-            {payload.walletAddresses?.receiver}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 2, display: "flex", gap: 3 }}>
-            <span style={{ fontSize: "1.1rem", color: "rgb(195, 116, 255)" }}>
-              Amount:
-            </span>
-            {payload.amount?.value} {payload.amount?.currency}
-          </Typography>
-        </DialogContent>
-
-        <DialogActions
-          sx={{
-            padding: 2,
-          }}
-        >
-          <Button
-            onClick={() => setIsDialogOpen(false)}
-            variant="outlined"
-            sx={{
-              borderColor: "#D885F3",
-              color: "#D885F3",
-              "&:hover": { backgroundColor: "#2A003E" },
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            variant="contained"
-            sx={{
-              backgroundColor: "#D885F3",
-              color: "white",
-              "&:hover": { backgroundColor: "#B968C7" },
-            }}
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <TransactionDialog
+        isDialogOpen={isDialogOpen}
+        setIsDialogOpen={setIsDialogOpen}
+        payload={payload}
+        handleConfirm={handleConfirm}
+      />
     </Box>
   );
 }
