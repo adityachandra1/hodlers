@@ -15,13 +15,6 @@ export interface SignerStuff<N extends Network, C extends Chain> {
 	address: ChainAddress<C>;
 }
 
-// Function to fetch environment variables (like your private key)
-function getEnv(key: string): string {
-	const val = process.env[key];
-	if (!val) throw new Error(`Missing environment variable: ${key}`);
-	return val;
-}
-
 // Signer setup function for different blockchain platforms
 export async function getSigner<N extends Network, C extends Chain>(
 	chain: ChainContext<N, C>, chainName: string

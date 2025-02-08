@@ -111,7 +111,7 @@ export default function Home() {
         if(idToken){
             handleAuthenticate();
         }
-    }, [idToken])
+    }, [idToken, handleAuthenticate])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserInput(e.target.value);
