@@ -9,12 +9,12 @@ export interface Message {
   role: "assistant" | "user";
   content: string;
   txn_details?: {
-    hasRequiredFields: boolean;
-    amount: number;
-    sourceChain: string;
-    destinationChain: string;
-    destinationWalletAddress: string;
-    comments: string;
+    hasRequiredFields?: boolean;
+    amount?: number;
+    sourceChain?: string;
+    destinationChain?: string;
+    destinationWalletAddress?: string;
+    comments?: string;
   };
 }
 
@@ -92,7 +92,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loading, messages }) => {
           </Typography>
         </Box>
       )}
-
       {messages?.map((msg, index) => (
         <Box
           key={index}

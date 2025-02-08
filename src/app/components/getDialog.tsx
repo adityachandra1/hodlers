@@ -1,17 +1,16 @@
 import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button } from "@mui/material";
 import React from "react";
-import { Message } from "./chatBox";
 
 interface TransactionDialogProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
   txnDetails?: {
-    hasRequiredFields: boolean;
-    amount: number;
-    sourceChain: string;
-    destinationChain: string;
-    destinationWalletAddress: string;
-    comments: string;
+    hasRequiredFields?: boolean;
+    amount?: number;
+    sourceChain?: string;
+    destinationChain?: string;
+    destinationWalletAddress?: string; 
+    comments?: string;
   };
   handleConfirm: () => void;
 }

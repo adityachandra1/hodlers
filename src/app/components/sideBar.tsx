@@ -1,7 +1,25 @@
+import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import React from "react";
+import { getOrdersHistory } from "@okto_web3/react-sdk";
+import { useOkto } from "@okto_web3/react-sdk";
 
-const SideBar = ({ orders }: any) => {
+const SideBar = () => {
+  const oktoClient = useOkto();
+  const [orders, setOrders] = useState<any[]>([]);
+
+  async function fetchOrders() {
+    try {
+      const result = await getOrdersHistory(oktoClient);
+      setOrders(result);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   return (
     <Box
       sx={{
@@ -18,7 +36,7 @@ const SideBar = ({ orders }: any) => {
       }}
     >
       <Typography sx={{ fontSize: "1.2rem" }}>ORDER HISTORY</Typography>
-      {orders?.map((order: {}, index: number) => (
+      {orders?.map((order, index) => (
         <Box
           key={index}
           sx={{
@@ -30,7 +48,9 @@ const SideBar = ({ orders }: any) => {
             pb: 1,
           }}
         >
-          <Typography sx={{ fontSize: "1rem" }}>Order ID:</Typography>
+          <Typography sx={{ fontSize: "1rem" }}>
+            Order ID: {order?.id || "N/A"}
+          </Typography>
         </Box>
       ))}
     </Box>
